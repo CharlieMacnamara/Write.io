@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #0F172A;
+  --secondary: #3B82F6;
+  --background: #FFFFFF;
+  --surface: #F8FAFC;
+  --text: #1E293B;
+  --muted: #64748B;
+}
+
+[data-theme='dark'] {
+  --primary: #E2E8F0;
+  --secondary: #60A5FA;
+  --background: #0F172A;
+  --surface: #1E293B;
+  --text: #F8FAFC;
+  --muted: #94A3B8;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+} 
