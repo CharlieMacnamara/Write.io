@@ -1,16 +1,4 @@
-import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
-
-export interface Lesson {
-  id: string
-  slug: string
-  title: string
-  description: string
-  content: MDXRemoteSerializeResult
-  category: LessonCategory
-  difficulty: LessonDifficulty
-  duration: number // in minutes
-  prerequisites?: string[]
-}
+import type { ReactElement } from 'react'
 
 export type LessonCategory = 
   | 'punctuation'
@@ -18,10 +6,22 @@ export type LessonCategory =
   | 'style'
   | 'structure'
 
-export type LessonDifficulty = 
+export type LessonDifficulty =
   | 'beginner'
   | 'intermediate'
   | 'advanced'
+
+export interface Lesson {
+  id: string
+  slug: string
+  title: string
+  description: string
+  content: ReactElement
+  category: LessonCategory
+  difficulty: LessonDifficulty
+  duration: number // in minutes
+  prerequisites?: string[]
+}
 
 export interface LessonProgress {
   lessonId: string

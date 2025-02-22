@@ -1,9 +1,10 @@
 import fs from 'fs'
 import path from 'path'
 import { compileMDX } from 'next-mdx-remote/rsc'
+import { mdxComponents } from './mdx-components'
 import type { Lesson } from '@/types/lesson'
 
-const LESSONS_PATH = path.join(process.cwd(), 'src/app/lessons/')
+const LESSONS_PATH = path.join(process.cwd(), 'src/app/lessons')
 
 export async function getLessonBySlug(slug: string): Promise<Lesson | null> {
   try {
@@ -26,9 +27,15 @@ export async function getLessonBySlug(slug: string): Promise<Lesson | null> {
 async function loadLesson(filePath: string, slug: string): Promise<Lesson> {
   const fileContent = await fs.promises.readFile(filePath, 'utf8')
   
-  const { frontmatter, content } = await compileMDX({
+  const { content, frontmatter } = await compileMDX({
     source: fileContent,
-    options: { parseFrontmatter: true }
+    components: mdxComponents,
+    options: { 
+      parseFrontmatter: true,
+      mdxOptions: {
+        development: process.env.NODE_ENV === 'development'
+      }
+    }
   })
 
   return {

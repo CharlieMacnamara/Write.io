@@ -1,16 +1,10 @@
 import { notFound } from 'next/navigation'
-import { MDXRemote } from 'next-mdx-remote'
+import { MDXRemote } from 'next-mdx-remote/rsc'
 import { getLessonBySlug } from '@/lib/mdx/get-lesson'
 import { mdxComponents } from '@/lib/mdx/mdx-components'
 
-interface LessonPageProps {
-  params: {
-    slug: string
-  }
-}
-
-export default async function LessonPage({ params }: LessonPageProps) {
-  const lesson = await getLessonBySlug(params.slug)
+export default async function SymbolsGuidePage() {
+  const lesson = await getLessonBySlug('punctuation/symbols-guide')
   
   if (!lesson) {
     notFound()
@@ -29,10 +23,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </header>
 
         <div className="prose dark:prose-invert max-w-none">
-          <MDXRemote 
-            {...lesson.content}
-            components={mdxComponents}
-          />
+          {lesson.content}
         </div>
       </article>
     </main>

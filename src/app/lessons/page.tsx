@@ -1,17 +1,23 @@
 import { getAllLessons } from '@/lib/mdx/get-lesson'
 import { LessonCard } from '@/components/lessons/lesson-card'
+import type { Lesson, LessonCategory } from '@/types/lesson'
 
 export default async function LessonsPage() {
   const lessons = await getAllLessons()
   
-  const lessonsByCategory = lessons.reduce((acc, lesson) => {
+  const lessonsByCategory = lessons.reduce<Record<LessonCategory, Lesson[]>>((acc, lesson) => {
     const category = lesson.category
     if (!acc[category]) {
       acc[category] = []
     }
     acc[category].push(lesson)
     return acc
-  }, {})
+  }, {
+    punctuation: [],
+    grammar: [],
+    style: [],
+    structure: [],
+  })
 
   return (
     <main className="min-h-screen bg-background py-8">
