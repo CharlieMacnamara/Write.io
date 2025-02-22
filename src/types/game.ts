@@ -1,4 +1,9 @@
-export type GamePhase = 'SELECT_DIFFICULTY' | 'GAME_START' | 'GAME_ACTIVE' | 'GAME_END'
+export type GamePhase = 
+  | 'SELECT_DIFFICULTY'
+  | 'READY_TO_START'
+  | 'GAME_ACTIVE'
+  | 'GAME_END'
+
 export type Difficulty = 'easy' | 'medium' | 'hard'
 export type WritingStyle = 'creative' | 'non-fiction'
 
@@ -10,18 +15,35 @@ export interface GameSentence {
   feedback: string[]
 }
 
+export interface GameSubmission {
+  original: string
+  edited: string
+  score: number
+  feedback: string
+  isValid: boolean
+}
+
+export interface EditValidation {
+  isValid: boolean
+  score: number
+  feedback: string
+}
+
 export interface GameState {
   phase: GamePhase
   score: number
   timeLeft: number
-  difficulty: Difficulty
+  difficulty: Difficulty | null
   writingStyle: WritingStyle
-  currentSentence: string
+  currentSentence: string | null
   targetWordCount: number
+  comboMultiplier: number
+  consecutiveSuccess: number
   hasPlayedBefore: boolean
   showTutorial: boolean
   highScore: number
   isLoading: boolean
+  submissions: GameSubmission[]
   sentences: GameSentence[]
 }
 
@@ -39,11 +61,7 @@ export interface GameActions {
   startGame: () => Promise<void>
   endGame: () => void
   resetGame: () => void
-  submitEdit: (editedSentence: string) => {
-    isValid: boolean
-    score: number
-    feedback: string[]
-  }
+  submitEdit: (editedSentence: string) => EditValidation
 }
 
 export interface GameStore extends GameState {

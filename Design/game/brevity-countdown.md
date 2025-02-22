@@ -1,7 +1,7 @@
-# Brevity Game - Product Specification
+# Brevity Countdown - Product Specification
 
 ## Overview
-The Brevity Game is an interactive writing tool that teaches concise writing through practical editing exercises based on "The Elements of Style" principles. Players edit AI-generated sentences to improve clarity and brevity while racing against time.
+Players edit AI-generated sentences to improve clarity and brevity against the clock.
 
 ## Core Game Mechanics
 

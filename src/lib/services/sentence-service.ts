@@ -1,5 +1,6 @@
 import { Difficulty } from '@/types/game'
-import { generateSentence } from '../gemini'
+import { generateSentence as generateAISentence } from '../gemini'
+import type { EditValidation } from '@/types/game'
 
 interface SentenceMetrics {
   wordCount: number
@@ -32,98 +33,59 @@ const difficultyConfig = {
 }
 
 export class SentenceService {
-  private static calculateMetrics(sentence: string): SentenceMetrics {
-    const words = sentence.split(/\s+/).filter(Boolean)
-    const complexity = words.filter(word => word.length > 6).length / words.length
-    const readability = sentence.length / words.length // Average word length
+  static async generateSentence(difficulty: Difficulty | null): Promise<{ sentence: string; targetWordCount: number }> {
+    // For now, return a test sentence while AI integration is pending
+    const testSentences = {
+      easy: "Despite the rain, he went for his morning jog in the park.",
+      medium: "Despite the fact that it was raining heavily outside, he nevertheless decided to proceed with going for his daily morning jog around the neighborhood park.",
+      hard: "Notwithstanding the clearly observable meteorological phenomenon of substantial precipitation occurring in the immediate vicinity, the individual in question made the determination to proceed with his regularly scheduled cardiovascular exercise routine in the local recreational area.",
+    }
+
+    const config = difficulty ? difficultyConfig[difficulty] : difficultyConfig.medium
+    const sentence = difficulty ? testSentences[difficulty] : testSentences.medium
+    const wordCount = sentence.split(/\s+/).length
+    const targetWordCount = Math.ceil(wordCount * (1 - config.targetReduction))
 
     return {
-      wordCount: words.length,
-      complexity,
-      readability,
+      sentence,
+      targetWordCount
     }
   }
 
-  static async generateGameSentence(difficulty: Difficulty): Promise<SentenceWithMetrics> {
-    const config = difficultyConfig[difficulty]
-    let sentence = await generateSentence(difficulty)
-    let metrics = this.calculateMetrics(sentence)
+  static validateEdit(original: string, edited: string, targetWordCount: number): EditValidation {
+    const originalWords = original.trim().split(/\s+/).length
+    const editedWords = edited.trim().split(/\s+/).length
+    const wordsReduced = originalWords - editedWords
+
+    // Basic validation rules
+    if (editedWords > originalWords) {
+      return {
+        isValid: false,
+        score: 0,
+        feedback: "Edit should reduce word count"
+      }
+    }
+
+    if (editedWords < targetWordCount) {
+      return {
+        isValid: false,
+        score: 0,
+        feedback: "Too many words removed - meaning may be lost"
+      }
+    }
+
+    // Calculate score
+    let score = wordsReduced * 2 // Base points
+    score += 5 // Clarity bonus
     
-    // Ensure sentence meets difficulty criteria
-    let attempts = 0
-    while (
-      (metrics.wordCount < config.minWords || 
-       metrics.wordCount > config.maxWords) && 
-      attempts < 3
-    ) {
-      sentence = await generateSentence(difficulty)
-      metrics = this.calculateMetrics(sentence)
-      attempts++
-    }
-
-    const targetWordCount = Math.ceil(
-      metrics.wordCount * (1 - config.targetReduction)
-    )
-
-    return {
-      original: sentence,
-      metrics,
-      targetWordCount,
-    }
-  }
-
-  static validateEdit(
-    original: string,
-    edited: string,
-    targetWordCount: number
-  ): {
-    isValid: boolean
-    score: number
-    feedback: string[]
-  } {
-    const originalMetrics = this.calculateMetrics(original)
-    const editedMetrics = this.calculateMetrics(edited)
-    const feedback: string[] = []
-
-    // Calculate meaning preservation (simplified version)
-    const originalWords = original.toLowerCase().split(/\s+/)
-    const editedWords = edited.toLowerCase().split(/\s+/)
-    const commonWords = originalWords.filter(word => 
-      editedWords.includes(word)
-    )
-    const meaningPreservation = commonWords.length / originalWords.length
-
-    // Calculate base score
-    let score = 0
-    const wordsReduced = originalMetrics.wordCount - editedMetrics.wordCount
-    
-    if (wordsReduced > 0) {
-      score += wordsReduced * 2 // 2 points per word reduced
-      feedback.push(`+${wordsReduced * 2} points for reducing ${wordsReduced} words`)
-    }
-
-    // Meaning preservation bonus
-    if (meaningPreservation >= 0.7) {
-      score += 5
-      feedback.push('+5 points for maintaining core meaning')
-    }
-
-    // Target word count bonus
-    if (editedMetrics.wordCount <= targetWordCount) {
-      score += 10
-      feedback.push('+10 points for meeting target length')
-    }
-
-    // Readability improvement bonus
-    if (editedMetrics.readability < originalMetrics.readability) {
-      score += 5
-      feedback.push('+5 points for improving readability')
+    if (editedWords === targetWordCount) {
+      score += 10 // Perfect length bonus
     }
 
     return {
-      isValid: meaningPreservation >= 0.6 && editedMetrics.wordCount < originalMetrics.wordCount,
+      isValid: true,
       score,
-      feedback,
+      feedback: "Great job! Sentence is more concise."
     }
   }
 } 

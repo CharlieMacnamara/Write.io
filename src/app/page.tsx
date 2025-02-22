@@ -15,7 +15,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Link href="/lessons/punctuation/symbols-guide" className="w-full">
+          <Link href="/lessons" className="w-full">
             <Button 
               variant="outline" 
               size="lg" 
@@ -26,7 +26,7 @@ export default function Home() {
             </Button>
           </Link>
 
-          <Link href="/game" className="w-full">
+          <Link href="/games" className="w-full">
             <Button 
               variant="outline" 
               size="lg" 

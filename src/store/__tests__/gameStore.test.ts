@@ -1,5 +1,6 @@
 import { act } from '@testing-library/react'
 import { useGameStore } from '../gameStore'
+import { renderHook } from '@testing-library/react'
 
 describe('gameStore', () => {
   beforeEach(() => {
@@ -62,5 +63,50 @@ describe('gameStore', () => {
     const state = useGameStore.getState()
     expect(state.phase).toBe('GAME_ACTIVE')
     expect(state.isLoading).toBe(false)
+  })
+})
+
+describe('Game Store', () => {
+  it('should initialize with default state', () => {
+    const { result } = renderHook(() => useGameStore())
+    expect(result.current.phase).toBe('SELECT_DIFFICULTY')
+    expect(result.current.score).toBe(0)
+    expect(result.current.timeLeft).toBe(60)
+  })
+
+  it('should set difficulty and transition to READY_TO_START', () => {
+    const { result } = renderHook(() => useGameStore())
+    act(() => {
+      result.current.actions.setDifficulty('medium')
+    })
+    expect(result.current.difficulty).toBe('medium')
+    expect(result.current.phase).toBe('READY_TO_START')
+  })
+
+  it('should start the game and transition to GAME_ACTIVE', async () => {
+    const { result } = renderHook(() => useGameStore())
+    act(() => {
+      result.current.actions.setDifficulty('easy')
+    })
+    await act(async () => {
+      await result.current.actions.startGame()
+    })
+    expect(result.current.phase).toBe('GAME_ACTIVE')
+    expect(result.current.currentSentence).toBeDefined()
+  })
+
+  it('should submit an edit and update score', async () => {
+    const { result } = renderHook(() => useGameStore())
+    act(() => {
+      result.current.actions.setDifficulty('easy')
+    })
+    await act(async () => {
+      await result.current.actions.startGame()
+    })
+    const originalSentence = result.current.currentSentence
+    const editedSentence = originalSentence + " Edited."
+    const resultValidation = result.current.actions.submitEdit(editedSentence)
+    expect(resultValidation.isValid).toBe(true)
+    expect(result.current.score).toBeGreaterThan(0)
   })
 }) 
