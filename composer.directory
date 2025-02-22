@@ -1,4 +1,4 @@
-You are an expert in TypeScript, Node.js, Next.js App Router, React, DaisyUI, and Tailwind.
+You are an expert in TypeScript (5.x), Node.js (20.x), Next.js App Router (14.2.x), React (18.x), DaisyUI (4.x), and Tailwind CSS (3.x).
 
 Code Style and Structure
 - Write concise, technical TypeScript code with accurate examples.
@@ -17,15 +17,15 @@ TypeScript Usage
 - Use functional components with TypeScript interfaces.
 
 UI and Styling
-- Use DaisyUI components with Tailwind CSS customization.
+- Use DaisyUI 4.x components with Tailwind CSS 3.x customization.
 - Implement responsive design with Tailwind CSS; use a mobile-first approach.
 - Use Tailwind's built-in animation classes for gamification elements.
-- Integrate Headless UI for accessibility
-- Use Tailwind Merge for utility merging
-- Use clsx for conditional classes
-- Use Lucide React for icons
-- Use React-Hot-Toast for notifications
-- Use next-themes for dark mode
+- Use Headless UI 1.7.x for accessibility
+- Use Tailwind Merge 2.x for utility merging
+- Use clsx 2.x for conditional classes
+- Use Lucide React 0.344.x for icons
+- Use React-Hot-Toast 2.4.x for notifications
+- Use next-themes 0.2.x for dark mode
 
 Performance Optimization
 - Minimize 'use client', 'useEffect', and 'setState'.
@@ -41,15 +41,21 @@ Gamification Features
 - Implement level system based on completed lessons.
 
 AI Integration
-- Use DeepSeek API for writing assistance and feedback.
-- Implement proper rate limiting and error handling.
-- Use streaming responses for real-time feedback.
-- Cache common AI responses to reduce API costs.
-- Track token usage for cost optimization.
-- Implement fallback responses for API limits/errors.
+- Use Google's Gemini API for sentence generation
+- Implement proper rate limiting and error handling
+- Use streaming responses for real-time feedback
+- Cache common AI responses to reduce API costs
+- Track token usage for cost optimization
+- Implement fallback responses for API limits/errors
+- Handle Gemini API quotas and limits
+Sanitize and validate Gemini responses
+Optimize prompt tokens for cost efficiency
+Maintain response quality across difficulties
+
 
 State Management
-- Use Zustand for lightweight state management
+- Use Zustand 4.5.x for lightweight state management
+- Use zustand/middleware for persistence
 - Persist critical user data locally
 - Implement optimistic updates for better UX
 - Handle offline capabilities where possible
@@ -74,6 +80,9 @@ Cost Optimization
 - Monitor and log API usage.
 
 Testing
+- Use Jest 29.x for unit testing
+- Use React Testing Library 14.x for component testing
+- Use @testing-library/jest-dom 6.x for matchers
 - Write unit tests for critical business logic.
 - Implement E2E tests for main user flows.
 - Test error handling and fallbacks.
@@ -85,4 +94,17 @@ Documentation
 - Document state management patterns.
 - Keep API usage examples updated.
 
-Follow Next.js docs for Data Fetching, Rendering, and Routing.
+Dependencies:
+- @headlessui/react: ^1.7.x
+- @types/node: ^20.x
+- @types/react: ^18.x
+- autoprefixer: ^10.x
+- next: ^14.2.x
+- postcss: ^8.x
+- react: ^18.x
+- react-dom: ^18.x
+- tailwindcss: ^3.x
+- typescript: ^5.x
+- zustand: ^4.5.x
+
+Follow Next.js 14.2.x docs for Data Fetching, Rendering, and Routing.

@@ -1,13 +1,13 @@
-import * as React from 'react'
+import { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { Header } from '@/components/layout/header'
+import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const metadata = {
-  title: 'Write.io - Master Concise Writing',
-  description: 'Improve your writing through interactive brevity exercises',
+export const metadata: Metadata = {
+  title: 'Write.io - Improve Your Writing',
+  description: 'Master concise writing through interactive challenges',
 }
 
 export default function RootLayout({
@@ -16,10 +16,19 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Header />
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+      </head>
+      <body className={inter.className} suppressHydrationWarning>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

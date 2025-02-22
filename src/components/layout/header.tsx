@@ -2,20 +2,16 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-
-interface NavLinkProps {
-  href: string
-  children: React.ReactNode
-  className?: string
-}
+import type { NavLinkProps } from '@/types/components'
 
 function NavLink({ href, children, className }: NavLinkProps) {
   return (
     <Link 
       href={href}
       className={className}
+      legacyBehavior
     >
-      {children}
+      <a>{children}</a>
     </Link>
   )
 }

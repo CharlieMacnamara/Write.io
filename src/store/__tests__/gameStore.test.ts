@@ -35,4 +35,32 @@ describe('gameStore', () => {
     })
     expect(useGameStore.getState().writingStyle).toBe('non-fiction')
   })
+
+  it('should set difficulty and update phase', () => {
+    act(() => {
+      useGameStore.getState().actions.setDifficulty('hard')
+    })
+    
+    const state = useGameStore.getState()
+    expect(state.difficulty).toBe('hard')
+    expect(state.phase).toBe('GAME_START')
+  })
+
+  it('should not start game without selecting difficulty', async () => {
+    await expect(useGameStore.getState().actions.startGame()).rejects.toThrow('Please select difficulty first')
+  })
+
+  it('should start game after selecting difficulty', async () => {
+    act(() => {
+      useGameStore.getState().actions.setDifficulty('medium')
+    })
+
+    await act(async () => {
+      await useGameStore.getState().actions.startGame()
+    })
+
+    const state = useGameStore.getState()
+    expect(state.phase).toBe('GAME_ACTIVE')
+    expect(state.isLoading).toBe(false)
+  })
 }) 

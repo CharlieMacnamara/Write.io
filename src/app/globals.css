@@ -2,13 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --primary: #0F172A;
-  --secondary: #3B82F6;
-  --background: #FFFFFF;
-  --surface: #F8FAFC;
-  --text: #1E293B;
-  --muted: #64748B;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --primary: #0F172A;
+    --secondary: #3B82F6;
+    --surface: #F8FAFC;
+    --text: #1E293B;
+    --muted: #64748B;
+  }
+
+  /* Improve touch handling */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Fix iOS text size adjustment */
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Smooth scrolling for supported browsers */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* Better button handling on mobile */
+  button {
+    touch-action: manipulation;
+  }
 }
 
 [data-theme='dark'] {
@@ -23,4 +48,10 @@
 body {
   background-color: var(--background);
   color: var(--text);
+}
+
+/* Hide Grammarly extensions */
+grammarly-desktop-integration,
+div[data-gr-ext-installed] {
+  display: none !important;
 } 
