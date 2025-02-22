@@ -24,11 +24,11 @@ export function Header() {
           Write.io
         </NavLink>
         <nav className="flex items-center gap-4">
-          <NavLink href="/tutorial" className="text-muted hover:text-primary">
-            Tutorial
+          <NavLink href="/lessons" className="text-muted hover:text-primary">
+            Lessons
           </NavLink>
-          <NavLink href="/play" className="text-muted hover:text-primary">
-            Play
+          <NavLink href="/game" className="text-muted hover:text-primary">
+            Games
           </NavLink>
         </nav>
       </div>
