@@ -9,20 +9,22 @@ interface MeaningCheckResult {
 }
 
 const MEANING_CHECK_PROMPT = `
-Compare these two sentences and evaluate if the edited version maintains the core meaning of the original.
-Focus on:
-1. Key information preserved
-2. No significant meaning changes
-3. Clarity maintained
+You are a precise meaning comparison tool. Compare these sentences and determine if the edited version maintains the EXACT same core meaning.
 
 Original: "{original}"
 Edited: "{edited}"
 
+Rules:
+1. The edited sentence must convey the EXACT same key information
+2. No important details should be lost or changed
+3. Context and implications must remain identical
+4. Only the way of expressing the meaning should differ
+
 Respond in JSON format:
 {
-  "score": <number 0-100>,
-  "isPreserved": <boolean>,
-  "feedback": [<specific feedback points>]
+  "score": <0-100 based on meaning preservation>,
+  "isPreserved": <true only if meaning is exactly preserved>,
+  "feedback": ["Specific details about what meaning was lost or changed, if any"]
 }
 `
 
@@ -30,43 +32,27 @@ export async function checkMeaningPreservation(
   original: string,
   edited: string
 ): Promise<MeaningCheckResult> {
-  try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
-    const prompt = MEANING_CHECK_PROMPT
-      .replace('{original}', original)
-      .replace('{edited}', edited)
-
-    const result = await model.generateContent(prompt)
-    const response = await result.response
-    const analysis = JSON.parse(response.text())
-
-    return {
-      score: analysis.score,
-      feedback: analysis.feedback,
-      isPreserved: analysis.isPreserved
+  const model = genAI.getGenerativeModel({ 
+    model: 'gemini-pro',
+    generationConfig: {
+      temperature: 0.1, // Very low temperature for consistent evaluation
+      maxOutputTokens: 150,
+      topP: 0.1,
+      topK: 10
     }
-  } catch (error) {
-    console.error('Error checking meaning preservation:', error)
-    // Fallback to basic comparison if API fails
-    return fallbackMeaningCheck(original, edited)
-  }
-}
+  })
 
-function fallbackMeaningCheck(original: string, edited: string): MeaningCheckResult {
-  const originalWords = new Set(original.toLowerCase().split(/\W+/).filter(Boolean))
-  const editedWords = new Set(edited.toLowerCase().split(/\W+/).filter(Boolean))
-  
-  const keyWordsPreserved = Array.from(originalWords)
-    .filter(word => editedWords.has(word))
-    .length
-  
-  const score = Math.min(100, Math.floor((keyWordsPreserved / originalWords.size) * 100))
-  
+  const prompt = MEANING_CHECK_PROMPT
+    .replace('{original}', original)
+    .replace('{edited}', edited)
+
+  const result = await model.generateContent(prompt)
+  const response = await result.response
+  const analysis = JSON.parse(response.text())
+
   return {
-    score,
-    isPreserved: score >= 70,
-    feedback: [
-      score < 70 ? 'Key words missing from the original meaning' : 'Basic meaning check passed'
-    ]
+    score: analysis.score,
+    feedback: Array.isArray(analysis.feedback) ? analysis.feedback : [analysis.feedback],
+    isPreserved: analysis.isPreserved
   }
 } 

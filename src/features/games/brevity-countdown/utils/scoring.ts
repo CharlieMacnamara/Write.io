@@ -3,8 +3,7 @@ import { checkMeaningPreservation } from '../services/meaning-service'
 interface ScoringResult {
   points: number
   breakdown: {
-    basePoints: number
-    lengthBonus: number
+    brevityScore: number
     meaningScore: number
     timeBonus: number
     difficultyMultiplier: number
@@ -19,81 +18,78 @@ const DIFFICULTY_MULTIPLIERS = {
   hard: 2
 } as const
 
+// Target word reduction for each difficulty
+const REDUCTION_TARGETS = {
+  easy: 0.25, // 25% reduction target
+  medium: 0.35, // 35% reduction target
+  hard: 0.45 // 45% reduction target
+} as const
+
 export async function calculateGameScore(
   originalSentence: string,
   editedSentence: string,
   timeRemaining: number,
   difficulty: keyof typeof DIFFICULTY_MULTIPLIERS
 ): Promise<ScoringResult> {
-  const originalWords = originalSentence.split(' ').length
-  const editedWords = editedSentence.split(' ').length
-  const reduction = originalWords - editedWords
   const feedback: string[] = []
 
-  // Check meaning preservation first
+  // First, check if meaning is preserved
   const meaningCheck = await checkMeaningPreservation(originalSentence, editedSentence)
   
-  // If meaning is not preserved, return early with minimal points
   if (!meaningCheck.isPreserved) {
     return {
       points: 0,
       breakdown: {
-        basePoints: 0,
-        lengthBonus: 0,
-        meaningScore: meaningCheck.score,
+        brevityScore: 0,
+        meaningScore: 0,
         timeBonus: 0,
         difficultyMultiplier: DIFFICULTY_MULTIPLIERS[difficulty]
       },
-      feedback: [
-        'The edited sentence does not preserve the original meaning.',
-        ...meaningCheck.feedback
-      ],
+      feedback: meaningCheck.feedback,
       isValid: false
     }
   }
 
-  // Base scoring: 10 points per word reduced
-  const basePoints = Math.max(0, reduction * 10)
-  if (basePoints === 0) {
-    feedback.push('Try reducing more words while keeping the meaning.')
+  // Calculate brevity improvement
+  const originalWords = originalSentence.split(' ').length
+  const editedWords = editedSentence.split(' ').length
+  const reductionPercentage = (originalWords - editedWords) / originalWords
+  const targetReduction = REDUCTION_TARGETS[difficulty]
+
+  // Calculate brevity score (0-100)
+  let brevityScore: number
+
+  if (reductionPercentage <= 0) {
+    brevityScore = 0
+    feedback.push('The sentence needs to be shorter.')
+  } else if (reductionPercentage < targetReduction * 0.5) {
+    brevityScore = Math.floor((reductionPercentage / targetReduction) * 50)
+    feedback.push('More words can be removed while keeping the meaning.')
+  } else if (reductionPercentage < targetReduction) {
+    brevityScore = 50 + Math.floor((reductionPercentage / targetReduction) * 40)
+    feedback.push('Good reduction, but you can make it even more concise.')
+  } else {
+    brevityScore = 90 + Math.floor(Math.min(1, (reductionPercentage - targetReduction) * 2) * 10)
+    feedback.push('Excellent reduction!')
   }
 
-  // Length efficiency bonus
-  const targetLength = {
-    easy: originalWords * 0.7,
-    medium: originalWords * 0.6,
-    hard: originalWords * 0.5
-  }[difficulty]
-  
-  const lengthBonus = editedWords <= targetLength ? 25 : 0
-  if (lengthBonus) {
-    feedback.push('Great conciseness! You hit the target length.')
-  }
+  // Time bonus calculation
+  const timeBonus = Math.floor((timeRemaining / 60) * 30) // Max 30 points for time
 
-  // Time bonus: up to 50 points based on remaining time
-  const timeBonus = Math.floor((timeRemaining / 60) * 50)
-  if (timeBonus > 30) {
-    feedback.push('Quick work! Time bonus earned.')
-  }
-
-  // Apply difficulty multiplier
-  const difficultyMultiplier = DIFFICULTY_MULTIPLIERS[difficulty]
-
-  // Calculate total points
+  // Calculate final score
   const points = Math.floor(
-    (basePoints + lengthBonus + meaningCheck.score + timeBonus) * difficultyMultiplier
+    (brevityScore + timeBonus) * DIFFICULTY_MULTIPLIERS[difficulty]
   )
 
   return {
     points,
     breakdown: {
-      basePoints,
-      lengthBonus,
+      brevityScore,
       meaningScore: meaningCheck.score,
       timeBonus,
-      difficultyMultiplier
+      difficultyMultiplier: DIFFICULTY_MULTIPLIERS[difficulty]
     },
-    feedback: [...feedback, ...meaningCheck.feedback],
+    feedback,
     isValid: true
   }
 } 

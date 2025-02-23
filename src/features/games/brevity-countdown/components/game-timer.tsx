@@ -22,7 +22,6 @@ export function GameTimer() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="font-mono text-2xl">{timeRemaining}</span>
       <div className="radial-progress" style={{ "--value": (timeRemaining / 60) * 100 } as any}>
         {timeRemaining}s
       </div>

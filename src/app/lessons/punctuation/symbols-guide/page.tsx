@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
-import { MDXRemote } from 'next-mdx-remote/rsc'
 import { getLessonBySlug } from '@/lib/mdx/get-lesson'
+import { LessonLayout } from '@/components/lesson/lesson-layout'
+import { MDXRemote } from 'next-mdx-remote/rsc'
 import { mdxComponents } from '@/lib/mdx/mdx-components'
 
 export default async function SymbolsGuidePage() {
@@ -11,8 +12,8 @@ export default async function SymbolsGuidePage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
-      <article className="container mx-auto px-4 py-8 max-w-3xl">
+    <LessonLayout>
+      <article className="prose dark:prose-invert max-w-none">
         <header className="mb-8">
           <h1 className="text-4xl font-bold text-primary mb-3">
             {lesson.title}
@@ -22,10 +23,19 @@ export default async function SymbolsGuidePage() {
           </p>
         </header>
 
-        <div className="prose dark:prose-invert max-w-none">
-          {lesson.content}
+        <div className="mt-8">
+          <MDXRemote 
+            source={lesson.content}
+            components={mdxComponents}
+            options={{
+              parseFrontmatter: true,
+              mdxOptions: {
+                development: process.env.NODE_ENV === 'development'
+              }
+            }}
+          />
         </div>
       </article>
-    </main>
+    </LessonLayout>
   )
 } 

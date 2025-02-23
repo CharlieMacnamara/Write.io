@@ -1,10 +1,6 @@
 import type { ReactElement } from 'react'
 
-export type LessonCategory = 
-  | 'punctuation'
-  | 'grammar'
-  | 'style'
-  | 'structure'
+export type LessonCategory = 'punctuation' | 'grammar' | 'style' | 'structure' | 'uncategorized'
 
 export type LessonDifficulty =
   | 'beginner'
@@ -16,9 +12,9 @@ export interface Lesson {
   slug: string
   title: string
   description: string
-  content: ReactElement
+  content: any
   category: LessonCategory
-  difficulty: LessonDifficulty
+  difficulty: string
   duration: number // in minutes
   prerequisites?: string[]
 }

@@ -1,31 +1,93 @@
 ---
-title: "Comprehensive Symbols Guide"
-description: "Master the proper usage of punctuation and symbols in professional writing"
-category: "punctuation"
-difficulty: "intermediate"
-duration: 20
-prerequisites: ["basic-punctuation"]
+title: "Essential Punctuation Symbols Guide"
+description: "Master the art of punctuation with comprehensive examples and interactive exercises"
+difficulty: "beginner"
+timeEstimate: "30 minutes"
+order: 1
 ---
 
-# COMPREHENSIVE SYMBOLS GUIDE
+# Essential Punctuation Symbols Guide
 
-1. BASIC PUNCTUATION
+Welcome to your comprehensive guide to punctuation symbols. This lesson will help you master the most important punctuation marks through examples and interactive exercises.
 
-Period (.)
-- End sentences: "The meeting is over."
-- Abbreviations: "Dr. Smith" "Inc." "etc."
-- Web addresses: "website.com"
-- Decimal points: "3.14"
-- Ellipsis alternative: "..." (but prefer "…")
-- File extensions: "document.pdf"
+## The Semicolon (;)
 
-Comma (,)
-- Separate items in lists
-- Join independent clauses
-- Set off introductory phrases
-- Numbers: "1,000,000"
-- Addresses: "Portland, Oregon"
+The semicolon is used to connect related independent clauses and separate complex list items.
 
-Semicolon (;)
-- Connect related independent clauses
-- Separate complex list items 
+<RuleExample>
+  <Wrong>I love writing, it helps me express myself.</Wrong>
+  <Right>I love writing; it helps me express myself.</Right>
+  <Explanation>
+    Use a semicolon to join two related independent clauses without a coordinating conjunction.
+  </Explanation>
+</RuleExample>
+
+### Practice Time
+
+<TextPractice
+  original="The meeting was productive we covered all topics The team agreed on the timeline the project will start next week"
+  rules={["semicolon"]}
+  wordLimit={30}
+  hint="Add semicolons where independent clauses meet"
+/>
+
+## The Em Dash (—)
+
+The em dash is used for strong breaks in sentence structure and emphasizing content.
+
+<RuleExample>
+  <Wrong>My three favorite activities reading, writing, and coding are all sedentary.</Wrong>
+  <Right>My three favorite activities—reading, writing, and coding—are all sedentary.</Right>
+  <Explanation>
+    Em dashes can set off parenthetical elements more emphatically than commas.
+  </Explanation>
+</RuleExample>
+
+<MultipleChoice
+  question="Which sentence correctly uses the em dash?"
+  options={[
+    "Everything I own—my books, my laptop, my notes—was in that bag.",
+    "Everything I own - my books, my laptop, my notes - was in that bag.",
+    "Everything I own -- my books, my laptop, my notes -- was in that bag.",
+    "Everything I own...my books, my laptop, my notes...was in that bag."
+  ]}
+  correct={0}
+  explanation="Em dashes should be used without spaces on either side, and should be true em dashes (—) rather than hyphens (-) or double hyphens (--)."
+/>
+
+## Timed Challenge
+
+Put your skills to the test! Add appropriate punctuation (semicolons and em dashes) to the following text:
+
+<TimedExercise
+  duration={120}
+  wordLimit={75}
+  prompt="The writer finished her novel the publisher immediately expressed interest The characters in her book John Sarah and Michael were based on her friends they didn't know it yet The book became a bestseller its success was unexpected"
+  rules={["semicolon", "emDash"]}
+/>
+
+## Quick Review
+
+<MultipleChoice
+  question="Which punctuation mark would you use to create a strong break in a sentence for emphasis?"
+  options={[
+    "Em dash (—)",
+    "Hyphen (-)",
+    "Semicolon (;)",
+    "Ellipsis (...)"
+  ]}
+  correct={0}
+  explanation="The em dash is perfect for creating dramatic breaks or emphasis in sentences, setting it apart from other punctuation marks."
+/>
+
+<ProgressCheck
+  requiredScore={80}
+  message="Great work! You're mastering these punctuation marks. Ready to move on to the next lesson?"
+/>
+
+---
+
+<NavigationButtons
+  prev="/lessons/punctuation/introduction"
+  next="/lessons/punctuation/advanced-usage"
+/> 

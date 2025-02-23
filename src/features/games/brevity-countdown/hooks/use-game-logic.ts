@@ -7,7 +7,8 @@ export function useGameLogic() {
     setCurrentSentence,
     setError,
     setLoading,
-    difficulty
+    difficulty,
+    preloadNextSentence
   } = useBrevityCountdownStore()
 
   const initializeGame = useCallback(async () => {
@@ -15,12 +16,13 @@ export function useGameLogic() {
       setLoading(true)
       const sentence = await generateSentence({ difficulty })
       setCurrentSentence(sentence)
+      await preloadNextSentence()
     } catch (error) {
       setError('Failed to start game. Please try again.')
     } finally {
       setLoading(false)
     }
-  }, [difficulty, setCurrentSentence, setError, setLoading])
+  }, [difficulty, setCurrentSentence, setError, setLoading, preloadNextSentence])
 
   return { initializeGame }
 } 

@@ -3,13 +3,23 @@
 import { useBrevityCountdownStore } from '../store/brevity-countdown-store'
 
 export function GameResults() {
-  const { score, highScores, difficulty, startGame } = useBrevityCountdownStore()
+  const { 
+    score, 
+    highScores, 
+    difficulty,
+    phase,
+    setPhase
+  } = useBrevityCountdownStore()
   
   const isNewHighScore = highScores.some(hs => 
     hs.score === score && 
     hs.difficulty === difficulty && 
     hs.date === new Date().toISOString()
   )
+
+  const handlePlayAgain = () => {
+    setPhase('idle')
+  }
 
   return (
     <div className="card bg-base-200 p-6">
@@ -54,7 +64,7 @@ export function GameResults() {
         <div className="card-actions justify-end">
           <button 
             className="btn btn-primary"
-            onClick={() => startGame(difficulty)}
+            onClick={handlePlayAgain}
           >
             Play Again
           </button>

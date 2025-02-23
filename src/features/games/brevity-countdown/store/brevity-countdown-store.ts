@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { generateSentence } from '../services/sentence-service'
 
 export interface HighScore {
   score: number
@@ -19,6 +20,7 @@ interface GameState {
   highScores: HighScore[]
   isLoading: boolean
   error: string | null
+  nextSentence: string
   
   // Actions
   startGame: (difficulty: GameDifficulty) => void
@@ -28,11 +30,15 @@ interface GameState {
   updateTimeRemaining: (time: number) => void
   setError: (error: string | null) => void
   setLoading: (loading: boolean) => void
+  setPhase: (phase: GamePhase) => void
+  generateNewSentence: () => Promise<void>
+  preloadNextSentence: () => Promise<void>
+  advanceToNextSentence: () => void
 }
 
 export const useBrevityCountdownStore = create<GameState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       phase: 'idle',
       score: 0,
       timeRemaining: 60,
@@ -41,13 +47,16 @@ export const useBrevityCountdownStore = create<GameState>()(
       highScores: [],
       isLoading: false,
       error: null,
+      nextSentence: '',
 
       startGame: (difficulty) => set({
         phase: 'playing',
         score: 0,
         timeRemaining: 60,
         difficulty,
-        error: null
+        error: null,
+        currentSentence: '',
+        nextSentence: ''
       }),
 
       endGame: () => set((state) => {
@@ -78,7 +87,42 @@ export const useBrevityCountdownStore = create<GameState>()(
       }),
 
       setError: (error) => set({ error }),
-      setLoading: (loading) => set({ isLoading: loading })
+      setLoading: (loading) => set({ isLoading: loading }),
+
+      setPhase: (phase) => set({ phase }),
+
+      generateNewSentence: async () => {
+        try {
+          set({ isLoading: true })
+          const difficulty = get().difficulty
+          const sentence = await generateSentence({ difficulty })
+          set({ currentSentence: sentence })
+        } catch (error) {
+          set({ error: 'Failed to generate new sentence' })
+        } finally {
+          set({ isLoading: false })
+        }
+      },
+
+      preloadNextSentence: async () => {
+        try {
+          const difficulty = get().difficulty
+          const sentence = await generateSentence({ difficulty })
+          set({ nextSentence: sentence })
+        } catch (error) {
+          console.error('Failed to preload next sentence:', error)
+        }
+      },
+
+      advanceToNextSentence: () => {
+        const { nextSentence } = get()
+        set({ 
+          currentSentence: nextSentence,
+          nextSentence: ''
+        })
+        // Trigger preload of next sentence
+        get().preloadNextSentence()
+      }
     }),
     {
       name: 'brevity-countdown-storage'

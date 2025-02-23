@@ -9,7 +9,7 @@ interface LessonCardProps {
 export function LessonCard({ lesson }: LessonCardProps) {
   return (
     <Link 
-      href={`/lessons/${lesson.category}/${lesson.slug}`}
+      href={`/lessons/${lesson.category}/${lesson.slug.split('/').pop()}`}
       className="block"
     >
       <div className="p-4 rounded-lg border border-muted/20 hover:border-primary/20 transition-colors">

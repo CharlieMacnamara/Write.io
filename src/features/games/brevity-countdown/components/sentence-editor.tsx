@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useBrevityCountdownStore } from '../store/brevity-countdown-store'
 import { calculateGameScore } from '../utils/scoring'
+import { generateSentence } from '../services/sentence-service'
 import { toast } from 'react-hot-toast'
 
 export function SentenceEditor() {
@@ -10,7 +11,9 @@ export function SentenceEditor() {
     currentSentence, 
     updateScore, 
     timeRemaining, 
-    difficulty 
+    difficulty,
+    advanceToNextSentence,
+    setLoading
   } = useBrevityCountdownStore()
   
   const [editedSentence, setEditedSentence] = useState('')
@@ -35,20 +38,18 @@ export function SentenceEditor() {
           <div className="space-y-2">
             <div className="font-bold">Score: +{result.points}</div>
             <div className="text-sm opacity-80">
-              Base: {result.breakdown.basePoints}
-              {result.breakdown.lengthBonus > 0 && ` + Length: ${result.breakdown.lengthBonus}`}
+              Brevity: {result.breakdown.brevityScore}
               {result.breakdown.meaningScore > 0 && ` + Meaning: ${result.breakdown.meaningScore}`}
               {result.breakdown.timeBonus > 0 && ` + Time: ${result.breakdown.timeBonus}`}
               {` × ${result.breakdown.difficultyMultiplier}`}
             </div>
           </div>
         )
+        setEditedSentence('')
+        advanceToNextSentence()
       }
 
       setLastFeedback(result.feedback)
-      if (result.isValid) {
-        setEditedSentence('')
-      }
     } catch (error) {
       toast.error('Error checking sentence. Please try again.')
     } finally {
